@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CapIO — Say less. Post more.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDEAE0;
+    --paper-2:#E3DFD1;
+    --ink:#1C1B1F;
+    --ink-soft:#57544c;
+    --magenta:#FF3E7A;
+    --highlighter:#FFDD57;
+    --teal:#2FA88E;
+    --line: rgba(28,27,31,0.14);
+    --radius: 14px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%; display:block;}
+
+  a{color:inherit;}
+
+  :focus-visible{
+    outline: 3px solid var(--magenta);
+    outline-offset: 3px;
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    line-height:1.05;
+    margin:0;
+  }
+
+  .mono{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.02em;
+  }
+
+  .wrap{
+    max-width:1160px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- NAV ---------- */
+  header.site{
+    position:sticky; top:0; z-index:50;
+    background:rgba(237,234,224,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+    max-width:1160px; margin:0 auto;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Fraunces', serif; font-weight:700; font-size:1.25rem;
+  }
+  .brand img{width:34px; height:34px; border-radius:9px;}
+  .nav-cta{
+    background:var(--ink); color:var(--paper);
+    padding:9px 18px; border-radius:999px;
+    font-size:0.85rem; font-weight:600;
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  .nav-links{display:flex; gap:26px; font-size:0.9rem; color:var(--ink-soft);}
+  .nav-links a{text-decoration:none;}
+  .nav-links a:hover{color:var(--ink);}
+  @media (max-width:720px){ .nav-links{display:none;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:76px 0 60px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero .wrap{
+    display:grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap:56px;
+    align-items:center;
+  }
+  @media (max-width:900px){
+    .hero .wrap{grid-template-columns:1fr; gap:44px;}
+    .hero{padding:44px 0 40px;}
+  }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem; text-transform:uppercase; letter-spacing:0.09em;
+    color:var(--ink-soft);
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    padding:6px 12px; border-radius:999px;
+    margin-bottom:22px;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--magenta);}
+
+  .hero h1{
+    font-size:clamp(2.6rem, 5.4vw, 4.2rem);
+    margin-bottom:22px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--magenta);
+  }
+  .hero p.lede{
+    font-size:1.15rem;
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin-bottom:34px;
+  }
+
+  .cta-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--ink); color:var(--paper);
+    padding:15px 26px; border-radius:12px;
+    font-weight:600; font-size:1rem;
+    text-decoration:none;
+    box-shadow: 4px 4px 0 var(--magenta);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--magenta); }
+  .btn-primary svg{width:20px;height:20px;flex:none;}
+
+  .meta-line{
+    font-size:0.85rem; color:var(--ink-soft);
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  /* --- signature card: the caption generator mock --- */
+  .card-stage{
+    position:relative;
+    display:flex; justify-content:center;
+  }
+  .caption-card{
+    position:relative;
+    width:100%;
+    max-width:360px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:26px 24px 22px;
+    box-shadow: 0 2px 0 var(--line), 10px 14px 0 -2px rgba(28,27,31,0.06), 0 22px 40px -18px rgba(28,27,31,0.35);
+    transform: rotate(-2deg);
+  }
+  .caption-card::before{
+    content:"";
+    position:absolute;
+    top:-14px; left:34px;
+    width:64px; height:26px;
+    background: rgba(255,221,87,0.85);
+    border:1px solid rgba(28,27,31,0.12);
+    transform: rotate(-4deg);
+  }
+  .card-top{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:16px;
+  }
+  .card-top .app-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem; color:var(--ink-soft);
+  }
+  .lang-chip{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    background:var(--paper-2);
+    padding:4px 9px; border-radius:999px;
+    border:1px solid var(--line);
+  }
+  .caption-text{
+    font-family:'Fraunces', serif;
+    font-size:1.3rem;
+    line-height:1.4;
+    min-height:5.2rem;
+    margin-bottom:16px;
+  }
+  .caption-text .type-cursor{
+    display:inline-block;
+    width:2px; height:1.05em;
+    background:var(--ink);
+    margin-left:2px;
+    vertical-align:-0.15em;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{opacity:0;} }
+  .chip-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip-row span{
+    font-size:0.72rem;
+    padding:5px 10px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+  }
+  .chip-row .style-chip{ background: rgba(47,168,142,0.14); color:#1c5f4f; border-color: rgba(47,168,142,0.3);}
+  .chip-row .platform-chip{ background: rgba(255,62,122,0.1); color:#9c1c47; border-color: rgba(255,62,122,0.28);}
+
+  .credit-counter{
+    position:absolute; right:-14px; bottom:-16px;
+    background:var(--ink); color:var(--paper);
+    border-radius:12px; padding:8px 12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    box-shadow: 4px 4px 0 var(--highlighter);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .type-cursor{ animation:none; }
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section{ padding:70px 0; }
+  .section-head{ max-width:640px; margin-bottom:44px; }
+  .section-head .kicker{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem; text-transform:uppercase; letter-spacing:0.09em;
+    color:var(--magenta); margin-bottom:12px; display:block;
+  }
+  .section-head h2{ font-size:clamp(1.8rem,3.4vw,2.5rem); margin-bottom:14px;}
+  .section-head p{ color:var(--ink-soft); font-size:1.05rem; margin:0;}
+
+  /* ---------- FEATURES ---------- */
+  .feature-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  @media (max-width:860px){ .feature-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .feature-grid{grid-template-columns:1fr;} }
+
+  .feature-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 20px;
+    position:relative;
+  }
+  .feature-card .corner{
+    position:absolute; top:12px; right:14px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem; color: var(--ink-soft);
+    opacity:0.6;
+  }
+  .feature-card h3{
+    font-size:1.08rem; margin-bottom:8px; font-weight:600;
+  }
+  .feature-card p{ margin:0; color:var(--ink-soft); font-size:0.92rem; line-height:1.5;}
+  .feature-card .ic{
+    width:34px; height:34px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:14px;
+    background:var(--highlighter);
+  }
+  .feature-card .ic svg{ width:18px; height:18px; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+    border-top:1px solid var(--line);
+  }
+  @media (max-width:860px){ .steps{grid-template-columns:1fr;} }
+  .step{
+    padding:26px 22px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .steps .step:last-child{ border-right:none; }
+  @media (max-width:860px){ .step{border-right:none;} }
+  .step .num{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:500;
+    font-size:2rem; color: var(--magenta);
+    margin-bottom:10px; display:block;
+  }
+  .step h3{ font-size:1.02rem; margin-bottom:8px; }
+  .step p{ margin:0; color:var(--ink-soft); font-size:0.9rem; line-height:1.5;}
+
+  /* ---------- LANGUAGES ---------- */
+  .lang-wall{
+    display:flex; flex-wrap:wrap; gap:12px;
+  }
+  .stamp{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.85rem;
+    padding:10px 16px;
+    border:1.5px solid var(--ink);
+    border-radius:8px;
+    transform:rotate(var(--r,0deg));
+    background:#fff;
+  }
+  .stamp:nth-child(3n+1){ --r:-2deg; }
+  .stamp:nth-child(3n+2){ --r:1.5deg; }
+  .stamp:nth-child(3n){ --r:-1deg; }
+
+  /* ---------- SCREENSHOTS ---------- */
+  .shots{
+    display:flex; gap:20px; overflow-x:auto;
+    padding:6px 4px 20px;
+    scroll-snap-type:x mandatory;
+  }
+  .shots::-webkit-scrollbar{ height:8px; }
+  .shots::-webkit-scrollbar-thumb{ background:var(--ink); border-radius:99px; }
+  .shot{
+    flex:0 0 auto;
+    width:190px;
+    scroll-snap-align:start;
+    border-radius:18px;
+    border:6px solid var(--ink);
+    overflow:hidden;
+    background:#000;
+  }
+  .shot img{ width:100%; display:block; }
+
+  /* ---------- TRUST ---------- */
+  .trust-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:18px;
+  }
+  @media (max-width:640px){ .trust-grid{grid-template-columns:1fr;} }
+  .trust-card{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:24px; display:flex; gap:16px; align-items:flex-start;
+  }
+  .trust-card .seal{
+    flex:none; width:46px; height:46px; border-radius:50%;
+    border:2px dashed var(--teal);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--teal);
+  }
+  .trust-card h3{ font-size:1rem; margin-bottom:6px; }
+  .trust-card p{ margin:0; font-size:0.88rem; color:var(--ink-soft); }
+
+  /* ---------- FOOTER / FINAL CTA ---------- */
+  .final-cta{
+    background:var(--ink); color:var(--paper);
+    border-radius:24px;
+    margin:0 28px 60px;
+    padding:56px 40px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .final-cta h2{ color:var(--paper); font-size:clamp(1.9rem,4vw,2.7rem); margin-bottom:16px;}
+  .final-cta p{ color:rgba(237,234,224,0.72); margin-bottom:30px; font-size:1.02rem;}
+  .final-cta .btn-primary{
+    background:var(--paper); color:var(--ink);
+    box-shadow:4px 4px 0 var(--highlighter);
+  }
+  .final-cta .btn-primary:hover{ box-shadow:6px 6px 0 var(--highlighter); }
+
+  footer.site{
+    padding:0 0 50px;
+    font-size:0.85rem; color:var(--ink-soft);
+  }
+  footer.site .wrap{
+    display:flex; flex-wrap:wrap; gap:16px 28px;
+    justify-content:space-between; align-items:center;
+    border-top:1px solid var(--line);
+    padding-top:26px;
+  }
+  footer.site a{ text-decoration:underline; text-underline-offset:3px; }
+  .foot-links{ display:flex; gap:20px; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <div class="brand">
+      <img src="https://play-lh.googleusercontent.com/C1K4J7T0Bj9YSL4M4mQKHnGMbrQqYu7MS0ueg-A5Cr2RrNdDun4f5KtXIQnNfbcQ3V5Innb6qgBrXhZ5wutL=w96-h96" alt="">
+      CapIO
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#languages">Languages</a>
+      <a href="#trust">Privacy</a>
+    </div>
+    <a class="nav-cta" href="https://play.google.com/store/apps/details?id=com.hive.capio" target="_blank" rel="noopener">Install free</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> AI caption &amp; post generator</span>
+      <h1>Say less.<br>Post <em>more</em>.</h1>
+      <p class="lede">Give CapIO a topic, a description, or a photo — get a caption you'd actually post. In 11 languages, tuned to whatever platform you're writing for.</p>
+      <div class="cta-row">
+        <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.hive.capio" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3L21 12L3 21V3Z" fill="currentColor"/></svg>
+          Get it on Google Play
+        </a>
+        <span class="meta-line">Free · Contains ads · Rated 3+</span>
+      </div>
+    </div>
+
+    <div class="card-stage">
+      <div class="caption-card">
+        <div class="card-top">
+          <span class="app-tag mono">capio · generating</span>
+          <span class="lang-chip" id="langChip">EN</span>
+        </div>
+        <p class="caption-text" id="captionText"></p>
+        <div class="chip-row">
+          <span class="style-chip" id="styleChip">Playful</span>
+          <span class="platform-chip" id="platformChip">Instagram</span>
+        </div>
+        <div class="credit-counter mono" id="creditCounter">3 credits left</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">What it does</span>
+      <h2>One app, every caption you were about to overthink.</h2>
+      <p>CapIO turns a rough idea into finished text — no blank cursor, no staring at your camera roll for inspiration.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="corner mono">01</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h10M4 18h13" stroke="#1C1B1F" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Generate from a topic</h3>
+        <p>Type what your post is about, or a rough description, and get caption options built from it.</p>
+      </div>
+      <div class="feature-card">
+        <span class="corner mono">02</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="14" rx="2" stroke="#1C1B1F" stroke-width="2"/><circle cx="9" cy="10" r="1.4" fill="#1C1B1F"/><path d="M4 16l4.5-4 3 2.5L16 10l4 5" stroke="#1C1B1F" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>Generate from a photo</h3>
+        <p>Upload an image and let CapIO write around what's actually in the picture.</p>
+      </div>
+      <div class="feature-card">
+        <span class="corner mono">03</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#1C1B1F" stroke-width="2"/><path d="M4 12h16M12 4a13 13 0 0 1 0 16M12 4a13 13 0 0 0 0 16" stroke="#1C1B1F" stroke-width="2"/></svg></div>
+        <h3>Built for every platform</h3>
+        <p>Write once for the feed you're actually posting to — CapIO shapes tone and length to fit it.</p>
+      </div>
+      <div class="feature-card">
+        <span class="corner mono">04</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M5 8h14M5 12h14M5 16h9" stroke="#1C1B1F" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3>11 languages, natively</h3>
+        <p>English, French, Spanish, German, Portuguese, Dutch, Japanese, Korean, Italian, Chinese, Russian.</p>
+      </div>
+      <div class="feature-card">
+        <span class="corner mono">05</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v9l6 3" stroke="#1C1B1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="#1C1B1F" stroke-width="2"/></svg></div>
+        <h3>A history you can revisit</h3>
+        <p>Past generations are kept in your content history, so a good line is never lost in a scroll-back.</p>
+      </div>
+      <div class="feature-card">
+        <span class="corner mono">06</span>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4l2.4 5.1L20 10l-4 3.8.9 5.6L12 16.9 7.1 19.4 8 13.8 4 10l5.6-.9L12 4z" stroke="#1C1B1F" stroke-width="2" stroke-linejoin="round"/></svg></div>
+        <h3>Pick a style, not just words</h3>
+        <p>Playful, direct, poetic — choose how a post should sound, not only what it says.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">How it works</span>
+      <h2>Four steps, however you like to start.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="num">1</span>
+        <h3>Describe it</h3>
+        <p>Enter a topic, or describe what your post is about.</p>
+      </div>
+      <div class="step">
+        <span class="num">2</span>
+        <h3>Add a photo</h3>
+        <p>Optional — upload an image for the caption to be built around.</p>
+      </div>
+      <div class="step">
+        <span class="num">3</span>
+        <h3>Choose platform &amp; language</h3>
+        <p>Tell CapIO where it's going and which language it should be written in.</p>
+      </div>
+      <div class="step">
+        <span class="num">4</span>
+        <h3>Generate</h3>
+        <p>Get caption options back, ready to paste and post.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="languages">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Multi-language</span>
+      <h2>Written the way your audience actually reads.</h2>
+      <p>Switch languages per post — CapIO doesn't just translate, it generates natively in each one.</p>
+    </div>
+    <div class="lang-wall">
+      <span class="stamp">English</span>
+      <span class="stamp">French</span>
+      <span class="stamp">Spanish</span>
+      <span class="stamp">German</span>
+      <span class="stamp">Portuguese</span>
+      <span class="stamp">Dutch</span>
+      <span class="stamp">Japanese</span>
+      <span class="stamp">Korean</span>
+      <span class="stamp">Italian</span>
+      <span class="stamp">Chinese</span>
+      <span class="stamp">Russian</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">See it in the app</span>
+      <h2>A closer look</h2>
+    </div>
+    <div class="shots">
+      <div class="shot"><img src="https://play-lh.googleusercontent.com/q65_lLwvd7nyiY400innAJ-ALQ0lr1nKZGMJtSBYZ0OHAPbQndv8JmMN4wx9vJb-mAk0UeIC5m6o71k_sYxkdKA=w526-h296" alt="CapIO screenshot 1" loading="lazy"></div>
+      <div class="shot"><img src="https://play-lh.googleusercontent.com/YLOs2HIZKNMkpLiMEVrEwI2hLbg0zPWXT0GHYwEhPe0IpS-cmdU8QlP59kDCjRmhiaxU4w414Ua5uGT781GElw=w526-h296" alt="CapIO screenshot 2" loading="lazy"></div>
+      <div class="shot"><img src="https://play-lh.googleusercontent.com/gReUsAgp4I8LitC3C-eKrvnCGuUlt132Sldxi87DbmFVJ-HNQDDZ8VH43U3x70u6ulIsw2KW4YigN2r669nI=w526-h296" alt="CapIO screenshot 3" loading="lazy"></div>
+      <div class="shot"><img src="https://play-lh.googleusercontent.com/uIOp65YVvyMTAKLCcmCIESUT2wmI5trJ_OGAxpRirQyN4oLS_MM8CVWBGJU7RI20-dEcIGOM6GSF8gwxfUTA=w526-h296" alt="CapIO screenshot 4" loading="lazy"></div>
+      <div class="shot"><img src="https://play-lh.googleusercontent.com/5tf80jLCUXtz4XETah-Q4zBX4C2TDukMEhdXEwxqNQMEcaawA2MKZnsZtCVujvzy1Z5lRXFdu1IEq1znewooCA=w526-h296" alt="CapIO screenshot 5" loading="lazy"></div>
+      <div class="shot"><img src="https://play-lh.googleusercontent.com/0qKEk4E1UK1ksLCWEkc0Z_Fk7JHeVMOWr8FXECgLJ1_qMtGq6U97qadpeMIa05m5IjacEIA7Y4By3sl_pc79fo4=w526-h296" alt="CapIO screenshot 6" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="trust">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Data safety</span>
+      <h2>What CapIO does with your data: not much.</h2>
+      <p>As declared by the developer on Google Play.</p>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-card">
+        <div class="seal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h3>No data shared with third parties</h3>
+          <p>The developer reports that CapIO does not share user data with outside companies.</p>
+        </div>
+      </div>
+      <div class="trust-card">
+        <div class="seal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h3>No data collected</h3>
+          <p>The developer reports that CapIO does not collect user data.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="final-cta">
+    <h2>Your next caption is one topic away.</h2>
+    <p>Free to install. Works across platforms and languages from day one.</p>
+    <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.hive.capio" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3L21 12L3 21V3Z" fill="currentColor"/></svg>
+      Get CapIO on Google Play
+    </a>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© 2026 DoubleClutch · Developed by Trinity Priscilla Biywaga, Uganda</span>
+    <div class="foot-links">
+      <a href="https://doc-hosting.flycricket.io/capio-privacy-policy/dbb8fe2f-a6b6-42a3-b5af-db450eedf1fa/privacy" target="_blank" rel="noopener">Privacy policy</a>
+      <a href="mailto:artoonium@gmail.com">Support</a>
+      <a href="https://play.google.com/store/apps/details?id=com.hive.capio" target="_blank" rel="noopener">Google Play listing</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var demos = [
+    { text:"Sunset hits different in Kampala tonight.", lang:"EN", style:"Playful", platform:"Instagram" },
+    { text:"Le café du matin, meilleur que toute réunion.", lang:"FR", style:"Direct", platform:"TikTok" },
+    { text:"日が沈む瞬間が、今日いちばん好きな時間。", lang:"JA", style:"Poetic", platform:"Instagram" },
+    { text:"Pequeños pasos, grandes lanzamientos.", lang:"ES", style:"Direct", platform:"LinkedIn" },
+    { text:"Neuer Tag, neue Idee, gleiche Kaffeetasse.", lang:"DE", style:"Playful", platform:"Facebook" }
+  ];
+
+  var textEl = document.getElementById('captionText');
+  var langEl = document.getElementById('langChip');
+  var styleEl = document.getElementById('styleChip');
+  var platformEl = document.getElementById('platformChip');
+  var creditEl = document.getElementById('creditCounter');
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var i = 0;
+  var credits = 3;
+
+  function renderStatic(demo){
+    textEl.textContent = demo.text;
+    langEl.textContent = demo.lang;
+    styleEl.textContent = demo.style;
+    platformEl.textContent = demo.platform;
+  }
+
+  function typeOut(demo, done){
+    var chars = Array.from(demo.text);
+    var idx = 0;
+    langEl.textContent = demo.lang;
+    styleEl.textContent = demo.style;
+    platformEl.textContent = demo.platform;
+    textEl.innerHTML = '';
+    var cursor = document.createElement('span');
+    cursor.className = 'type-cursor';
+
+    var interval = setInterval(function(){
+      idx++;
+      textEl.textContent = chars.slice(0, idx).join('');
+      textEl.appendChild(cursor);
+      if(idx >= chars.length){
+        clearInterval(interval);
+        setTimeout(done, 1400);
+      }
+    }, 32);
+  }
+
+  function cycle(){
+    var demo = demos[i % demos.length];
+    i++;
+    credits = credits > 0 ? credits - 1 : 3;
+    creditEl.textContent = credits + (credits === 1 ? ' credit left' : ' credits left');
+    if(reduceMotion){
+      renderStatic(demo);
+      setTimeout(cycle, 2600);
+    } else {
+      typeOut(demo, cycle);
+    }
+  }
+
+  cycle();
+})();
+</script>
+
+</body>
+</html>
