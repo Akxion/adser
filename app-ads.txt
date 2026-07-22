@@ -1,3 +1,6 @@
+google.com, pub-1670239100684062, DIRECT, f08c47fec0942fa0
+tappx.com, z9d4694aa, DIRECT, 9f375a07da0318ec
+
 start.io, 134194716, DIRECT
 pubnative.net, 1007349, RESELLER, d641df8625486a7b
 pubmatic.com, 161162, RESELLER, 5d62403b186f2ace
